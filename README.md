@@ -51,6 +51,32 @@ Note: you can also use the `ignoreSilentSwitch` prop, shown below.
 </details>
 
 <details>
+  <summary>iOS (CocoaPods)</summary>
+Setup your Podfile like it is described in the [react-native documentation](https://facebook.github.io/react-native/docs/integration-with-existing-apps#configuring-cocoapods-dependencies). 
+
+Depending on your requirements you have to choose between the two possible subpodspecs:
+
+video only:
+
+```diff
+  pod 'Folly', :podspec => '../node_modules/react-native/third-party-podspecs/Folly.podspec'
+
++  `pod 'react-native-video', :path => '../node_modules/react-native-video/react-native-video.podspec'`
+end
+```
+
+video with caching (you can learn more about caching [here](docs/caching.md):
+
+```diff
+  pod 'Folly', :podspec => '../node_modules/react-native/third-party-podspecs/Folly.podspec'
+
++  `pod 'react-native-video/VideoCaching', :path => '../node_modules/react-native-video/react-native-video.podspec'`
+end
+```
+
+</details>
+
+<details>
   <summary>tvOS</summary>
   
 Run `react-native link` to link the react-native-video library.
@@ -191,20 +217,7 @@ using System.Collections.Generic;
        onBuffer={this.onBuffer}                // Callback when remote video is buffering
        onEnd={this.onEnd}                      // Callback when playback finishes
        onError={this.videoError}               // Callback when video cannot be loaded
-       onFullscreenPlayerWillPresent={this.fullScreenPlayerWillPresent} // Callback before fullscreen starts
-       onFullscreenPlayerDidPresent={this.fullScreenPlayerDidPresent}   // Callback after fullscreen started
-       onFullscreenPlayerWillDismiss={this.fullScreenPlayerWillDismiss} // Callback before fullscreen stops
-       onFullscreenPlayerDidDismiss={this.fullScreenPlayerDidDismiss}  // Callback after fullscreen stopped
        style={styles.backgroundVideo} />
-
-// Later to trigger fullscreen
-this.player.presentFullscreenPlayer()
-
-// Disable fullscreen
-this.player.dismissFullscreenPlayer()
-
-// To set video position in seconds (seek)
-this.player.seek(0)
 
 // Later on in your styles..
 var styles = StyleSheet.create({
@@ -240,12 +253,18 @@ var styles = StyleSheet.create({
 
 ### Event props
 * [onAudioBecomingNoisy](#onaudiobecomingnoisy)
+* [onFullscreenPlayerWillPresent](#onfullscreenplayerwillpresent)
+* [onFullscreenPlayerDidPresent](#onfullscreenplayerdidpresent)
+* [onFullscreenPlayerWillDismiss](#onfullscreenplayerwilldismiss)
+* [onFullscreenPlayerDidDismiss](#onfullscreenplayerdiddismiss)
 * [onLoad](#onload)
 * [onLoadStart](#onloadstart)
 * [onProgress](#onprogress)
 * [onTimedMetadata](#ontimedmetadata)
 
 ### Methods
+* [dismissFullscreenPlayer](#dismissfullscreenplayer)
+* [presentFullscreenPlayer](#presentfullscreenplayer)
 * [seek](#seek)
 
 ### Configurable props
@@ -460,6 +479,34 @@ Payload: none
 
 Platforms: Android ExoPlayer, iOS
 
+#### onFullscreenPlayerWillPresent
+Callback function that is called when the player is about to enter fullscreen mode.
+
+Payload: none
+
+Platforms: Android ExoPlayer, Android MediaPlayer, iOS
+
+#### onFullscreenPlayerDidPresent
+Callback function that is called when the player has entered fullscreen mode.
+
+Payload: none
+
+Platforms: Android ExoPlayer, Android MediaPlayer, iOS
+
+#### onFullscreenPlayerWillDismiss
+Callback function that is called when the player is about to exit fullscreen mode.
+
+Payload: none
+
+Platforms: Android ExoPlayer, Android MediaPlayer, iOS
+
+#### onFullscreenPlayerDidDismiss
+Callback function that is called when the player has exited fullscreen mode.
+
+Payload: none
+
+Platforms: Android ExoPlayer, Android MediaPlayer, iOS
+
 #### onLoad
 Callback function that is called when the media is loaded and ready to play.
 
@@ -568,6 +615,34 @@ return (
     ref => (this.player = ref) />
 );
 ```
+
+#### dismissFullscreenPlayer
+`dismissFullscreenPlayer()`
+
+Take the player out of fullscreen mode.
+
+Example:
+```
+this.player.dismissFullscreenPlayer();
+```
+
+Platforms: Android ExoPlayer, Android MediaPlayer, iOS
+
+#### FullscreenPlayer
+`presentFullscreenPlayer()`
+
+Put the player in fullscreen mode.
+
+On iOS, this displays the video in a fullscreen view controller with controls.
+
+On Android ExoPlayer & MediaPlayer, this puts the navigation controls in fullscreen mode. It is not a complete fullscreen implementation, so you will still need to apply a style that makes the width and height match your screen dimensions to get a fullscreen video.
+
+Example:
+```
+this.player.presentFullscreenPlayer();
+```
+
+Platforms: Android ExoPlayer, Android MediaPlayer, iOS
 
 #### seek()
 `seek(seconds)`
@@ -706,12 +781,6 @@ If you encounter an error `Could not find com.android.support:support-annotation
 [1]: https://github.com/brentvatne/react-native-login/blob/56c47a5d1e23781e86e19b27e10427fd6391f666/App/Screens/UserInfoScreen.js#L32-L35
 [2]: https://github.com/react-native-community/react-native-video/tree/master/example
 [3]: https://developer.apple.com/library/ios/qa/qa1668/_index.html
-
-## Contributing
-
-`git clone --recurse-submodules <repo>` this repo.
-
-In order to test this library with the examples you will have to run `npm pack`, then `cd` into the example you want to try out and run `npm install`.
 
 ---
 

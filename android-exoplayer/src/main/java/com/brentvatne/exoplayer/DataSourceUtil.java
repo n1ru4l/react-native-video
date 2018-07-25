@@ -2,7 +2,9 @@ package com.brentvatne.exoplayer;
 
 import android.content.Context;
 import android.content.ContextWrapper;
+import android.net.Uri;
 
+import com.danikula.videocache.HttpProxyCacheServer;
 import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.modules.network.CookieJarContainer;
 import com.facebook.react.modules.network.ForwardingCookieHandler;
@@ -27,6 +29,7 @@ public class DataSourceUtil {
 
     private static DataSource.Factory rawDataSourceFactory = null;
     private static DataSource.Factory defaultDataSourceFactory = null;
+    private static HttpProxyCacheServer proxy = null;
     private static String userAgent = null;
 
     public static void setUserAgent(String userAgent) {
@@ -47,7 +50,7 @@ public class DataSourceUtil {
         return rawDataSourceFactory;
     }
 
-    public static void setRawDataSourceFactory(DataSource.Factory factory) {
+    public static void setRawDataSourceFactory(DataSource   .Factory factory) {
         DataSourceUtil.rawDataSourceFactory = factory;
     }
 
@@ -83,5 +86,15 @@ public class DataSourceUtil {
             okHttpDataSourceFactory.getDefaultRequestProperties().set(requestHeaders);
 
         return okHttpDataSourceFactory;
+    }
+
+    public static Uri getCacheUri(Uri uri, Context context) {
+        if (proxy == null) {
+            proxy = new HttpProxyCacheServer.Builder(context)
+                .maxCacheSize(1024 * 1024 * 512)
+                .maxCacheFilesCount(20)
+                .build();
+        }
+        return Uri.parse(proxy.getProxyUrl(uri.toString()));
     }
 }

@@ -95,6 +95,10 @@ public class DataSourceUtil {
                 .maxCacheFilesCount(20)
                 .build();
         }
-        return Uri.parse(proxy.getProxyUrl(uri.toString()));
+        String uriString = uri.toString();
+        if (uriString.startsWith("https://") || uriString.startsWith("http://")) {
+            return Uri.parse(proxy.getProxyUrl(uriString));
+        }
+        return uri;
     }
 }
